@@ -19,10 +19,7 @@ const userSchema = new Schema({
     type: String,
     required: true,
     unique: true,
-    lowercase: true,
-    validate: (value) => {
-      return validator.isEmail(value)
-    }
+    lowercase: true
   },
   identityNumber: {
     type: Number,
