@@ -1,7 +1,7 @@
 let mongoose = require('mongoose');
 
-export const USER_ROLE = 2;
-export const ADMIN_ROLE = 1;
+const USER_ROLE = 2;
+const ADMIN_ROLE = 1;
 const { Schema } = mongoose;
 const userSchema = new Schema({
   userName: {
@@ -37,4 +37,8 @@ const userSchema = new Schema({
   },
 });
 
-export default mongoose.model('User', userSchema);
+var User = mongoose.model('User', userSchema);
+
+module.exports = ADMIN_ROLE
+module.exports = USER_ROLE
+module.exports = User;

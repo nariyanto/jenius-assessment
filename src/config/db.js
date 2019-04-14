@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
-import { getConfig } from './config';
+const mongoose = require('mongoose');
+const { getConfig } = require('./config');
 
 const config = getConfig(process.env.NODE_ENV);
 mongoose.Promise = global.Promise;

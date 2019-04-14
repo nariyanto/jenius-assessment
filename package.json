@@ -4,6 +4,7 @@
   "description": "Jenius Assessment Backend Test",
   "main": "index.js",
   "scripts": {
+    "seed": "node src/seed/user-seeder.js",
     "dev": "nodemon src/app.js --exec babel-node --presets env",
     "build": "babel src -d dist --source-maps inline --copy-files",
     "heroku-postbuild": "npm install",

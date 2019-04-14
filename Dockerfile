@@ -11,7 +11,10 @@ RUN npm install
 COPY . .
 
 # Expose application ports - (4300 - for API)
-EXPOSE 4300
+EXPOSE 3000
+
+# seed data admin
+RUN npm run build
 
 # Generate build
 RUN npm run build
