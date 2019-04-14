@@ -1,0 +1,47 @@
+version: '3'
+services:
+  api:
+    container_name: septiyanapp
+    restart: "no"
+    build: .
+    volumes:
+      - ./:/var/www/septiyanapp
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+    links:
+      - redis
+      - mongo
+  mongo:
+    container_name: septiyanapp-mongo
+    image: 'mongo:4'
+    volumes:
+      - mongodb:/data/db/
+    networks:
+      - backend
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100MB"
+        max-file: "3"
+  redis:
+    container_name: septiyanapp-redis
+    image: 'redis:4.0.11'
+    networks:
+      - backend
+    volumes:
+      - redis:/data/
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100MB"
+        max-file: "3"
+
+networks:
+  backend:
+
+volumes:
+  mongodb:
+  redis:
