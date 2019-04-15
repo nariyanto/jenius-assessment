@@ -24,3 +24,11 @@ userRouter
   .get(adminPolicy, userController.findOne)
   .delete(adminPolicy, userController.deleteUser)
   .put(adminPolicy, userController.updateUser);
+
+userRouter
+  .route('/account/:number')
+  .get(adminPolicy, userController.findOneByAccountNumber);
+
+userRouter
+  .route('/identity/:number')
+  .get(adminPolicy, userController.findOneByIdentityNumber);

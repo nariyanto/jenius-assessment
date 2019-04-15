@@ -2,6 +2,7 @@ const express = require('express');
 const logger = require('morgan');
 const passport = require( 'passport');
 import { connect } from './config/db';
+import { client } from './config/redis';
 import { restRouter } from './api';
 import { configJWTStrategy } from './api/middlewares/passport-jwt';
 
@@ -9,6 +10,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 connect();
+client.on("error", function (err) {
+  console.log("Error " + err);
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 if (process.env.NODE_ENV === 'development') {

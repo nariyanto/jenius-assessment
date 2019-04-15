@@ -1,6 +1,7 @@
 const jwt = require('../../helpers/jwt');
 const userService = require('./user.service.js');
 import User, { USER_ROLE } from './user.model';
+import { client } from '../../../config/redis';
 
 const signup = async (req, res) => {
   try {
@@ -22,6 +23,11 @@ const signup = async (req, res) => {
       password: encryptedPass,
       role: value.role || USER_ROLE,
     });
+
+    client.setex('user/'+user.id, 3600, JSON.stringify(user));
+    client.setex('account/'+user.accountNumber, 3600, JSON.stringify(user));
+    client.setex('identity/'+user.identityNumber, 3600, JSON.stringify(user));
+
     return res.json({ 
       status: 'success',
       message: 'Singup success.',
@@ -106,6 +112,11 @@ const createUser = async (req, res) => {
       password: encryptedPass,
       role: value.role || USER_ROLE,
     });
+
+    client.setex('user/'+user.id, 3600, JSON.stringify(user));
+    client.setex('account/'+user.accountNumber, 3600, JSON.stringify(user));
+    client.setex('identity/'+user.identityNumber, 3600, JSON.stringify(user));
+
     return res.json({ 
       status: 'success',
       message: 'Create user success.',
@@ -151,18 +162,112 @@ const findAll = async (req, res) => {
 const findOne = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await User.findById(id).populate('user', 'userName accountNumber emailAddress identityNumber');
-    if (!user) {
-      return res.status(404).json({
-        status: 'error',
-        message: 'Could not find user'
+    client.get('user/'+id, async (error, user) => { 
+      if (error) {
+        throw error;
+      }
+      
+      if (!user) {
+        user = await User.findById(id).populate('user', 'userName accountNumber emailAddress identityNumber');
+        if (user) {
+          user = user.toJSON()
+          client.setex('user/'+id, 3600, JSON.stringify(user));
+        }
+      }
+      
+      if (!user) {
+        return res.status(404).json({
+          status: 'error',
+          message: 'Could not find user'
+        });
+      }
+      return res.json({ 
+        status: 'success',
+        message: 'Get user.',
+        data: JSON.parse(user)
       });
-    }
-    return res.json({ 
-      status: 'success',
-      message: 'Get user.',
-      data: user
     });
+    
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send({
+      status: 'error',
+      message: 'Whoops!!!',
+      error: err
+    });
+  }
+}
+
+const findOneByAccountNumber = async (req, res) => {
+  try {
+    const { number } = req.params
+    client.get('account/'+number, async (error, user) => { 
+
+      if (error) {
+        throw error;
+      }
+      
+      if (!user) {
+        user = await User.find({accountNumber: number}).populate('user', 'userName accountNumber emailAddress identityNumber');
+        if (Object.keys(user).length > 0) {
+          client.setex('account/'+number, 3600, JSON.stringify(user));
+        }
+      } else {
+        user = JSON.parse(user)
+      }
+
+      if (!user) {
+        return res.status(404).json({
+          status: 'error',
+          message: 'Could not find user'
+        });
+      }
+      return res.json({ 
+        status: 'success',
+        message: 'Get user.',
+        data: user
+      });
+    })
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send({
+      status: 'error',
+      message: 'Whoops!!!',
+      error: err
+    });
+  }
+}
+
+const findOneByIdentityNumber = async (req, res) => {
+  try {
+    const { number } = req.params
+    client.get('identity/'+number, async (error, user) => { 
+
+      if (error) {
+        throw error;
+      }
+
+      if (!user) {
+        user = await User.find({identityNumber: number}).populate('user', 'userName accountNumber emailAddress identityNumber');
+        if (Object.keys(user).length > 0) {
+          client.setex('identity/'+number, 3600, JSON.stringify(user));
+        }
+      } else {
+        user = JSON.parse(user)
+      }
+      
+      if (!user) {
+        return res.status(404).json({
+          status: 'error',
+          message: 'Could not find user'
+        });
+      }
+      return res.json({ 
+        status: 'success',
+        message: 'Get user.',
+        data: user
+      });
+    })
   } catch (err) {
     console.error(err);
     return res.status(500).send({
@@ -183,6 +288,11 @@ const deleteUser = async (req, res) => {
         message: 'Could not find user'
       });
     }
+
+    client.del('user/'+user.id);
+    client.del('account/'+user.accountNumber);
+    client.del('identity/'+user.identityNumber);
+
     return res.json({ 
       status: 'success',
       message: 'User has been deleted.'
@@ -220,6 +330,11 @@ const updateUser = async (req, res) => {
         message: 'Could not find user'
       });
     }
+
+    client.setex('user/'+id, 3600, JSON.stringify(user));
+    client.setex('account/'+user.accountNumber, 3600, JSON.stringify(user));
+    client.setex('identity/'+user.identityNumber, 3600, JSON.stringify(user));
+
     return res.json({ 
       status: 'success',
       message: 'Get list users.',
@@ -243,6 +358,8 @@ module.exports = {
   createUser,
   findAll,
   findOne,
+  findOneByAccountNumber,
+  findOneByIdentityNumber,
   deleteUser,
   updateUser
 };
