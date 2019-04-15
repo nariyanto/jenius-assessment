@@ -4,8 +4,12 @@ FROM node:latest
 # Set the workdir /var/www/septiyanapp
 WORKDIR /var/www/septiyanapp
 
-# Run npm install - install the npm dependencies
+COPY package*.json ./
+
+# seed data admin
 RUN npm install
+
+RUN npm install -g nodemon babel-cli
 
 # Copy application source
 COPY . .
@@ -13,11 +17,7 @@ COPY . .
 # Expose application ports - (4300 - for API)
 EXPOSE 3000
 
-# seed data admin
-RUN npm run build
-
-# Generate build
-RUN npm run build
+EXPOSE 6379
 
 # Start the application
 CMD ["npm", "run", "start"]

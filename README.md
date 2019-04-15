@@ -34,6 +34,11 @@ npm install
 npm run build
 ```
 
+### Seed user admin
+```
+npm run seed
+```
+
 ### Start App
 ```
 npm run start
@@ -43,4 +48,10 @@ npm run start
 Test your project setup by visiting the URL
 ```
 http://localhost:3000
+```
+
+## Login 
+```
+User : admin@mail.com
+Pass : admin
 ```

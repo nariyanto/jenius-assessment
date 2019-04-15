@@ -2,3 +2,6 @@ node_modules
 .idea
 .DS_Store
 dist
+
+# redis dump file db
+dump.rdb

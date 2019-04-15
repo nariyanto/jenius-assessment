@@ -6,17 +6,26 @@ services:
     build: .
     volumes:
       - ./:/var/www/septiyanapp
+    networks:
+      - backend
     ports:
       - '3000:3000'
     environment:
       - NODE_ENV=development
       - PORT=3000
+      - MONGODB_URI=mongodb://septiyanapp-mongo/septiyanapp
+      - REDIS_URL=redis://septiyanapp-redis
     links:
+      - redis
+      - mongo
+    depends_on:
       - redis
       - mongo
   mongo:
     container_name: septiyanapp-mongo
     image: 'mongo:4'
+    ports:
+      - "27017:27017"
     volumes:
       - mongodb:/data/db/
     networks:
@@ -29,6 +38,9 @@ services:
   redis:
     container_name: septiyanapp-redis
     image: 'redis:4.0.11'
+    command: redis-server
+    ports: 
+      - '6379:6379'
     networks:
       - backend
     volumes:
