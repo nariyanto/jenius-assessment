@@ -8,12 +8,11 @@
     "dev": "nodemon src/app.js --exec babel-node --presets env",
     "build": "babel src -d dist --source-maps inline --copy-files",
     "heroku-postbuild": "npm install",
-    "start": "babel-node src/app.js"
+    "start": "babel-node dist/app.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "babel": "^6.23.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
