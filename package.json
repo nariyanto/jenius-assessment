@@ -7,7 +7,7 @@
     "seed": "node src/seed/user-seeder.js",
     "dev": "nodemon src/app.js --exec babel-node --presets env",
     "build": "babel src -d dist --source-maps inline --copy-files",
-    "heroku-postbuild": "npm install",
+    "heroku-postbuild": "npm install && npm run build",
     "start": "node dist/app.js"
   },
   "author": "",
@@ -26,7 +26,6 @@
     "redis": "^2.8.0"
   },
   "devDependencies": {
-    "babel": "^6.23.0",
     "babel-cli": "^6.26.0",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.7.0",
