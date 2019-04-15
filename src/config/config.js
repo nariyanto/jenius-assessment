@@ -1,7 +1,7 @@
 const config = {
   production: {
     secret: process.env.secret,
-    MONGO_URI: process.env.MONGO_URI,
+    MONGO_URI: process.env.MONGODB_URI,
     port: process.env.PORT,
   },
   development: {
