@@ -1,7 +1,9 @@
 let mongoose = require('mongoose');
+let mongoosePaginate = require('mongoose-paginate');
+let uniqueValidator = require('mongoose-unique-validator');
 
-const USER_ROLE = 2;
 const ADMIN_ROLE = 1;
+const USER_ROLE = 2;
 const { Schema } = mongoose;
 const userSchema = new Schema({
   userName: {
@@ -37,8 +39,10 @@ const userSchema = new Schema({
   },
 });
 
+userSchema.plugin(uniqueValidator);
+userSchema.plugin(mongoosePaginate);
 var User = mongoose.model('User', userSchema);
 
-module.exports = ADMIN_ROLE
-module.exports = USER_ROLE
+module.exports.ADMIN_ROLE = ADMIN_ROLE
+module.exports.USER_ROLE = USER_ROLE
 module.exports = User;

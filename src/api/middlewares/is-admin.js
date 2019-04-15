@@ -1,10 +1,8 @@
-const { ADMIN_ROLE } = require('../resources/user/user.model');
+// import { ADMIN_ROLE } from '../resources/user/user.model';
 
-const isAdmin = (req, res, next) => {
-  if (req.user.role !== ADMIN_ROLE) {
+export const isAdmin = (req, res, next) => {
+  if (req.user.role !== 1) {
     return res.json({ err: 'unauthorized, not an admin' });
   }
   next();
 };
-
-module.exports = isAdmin

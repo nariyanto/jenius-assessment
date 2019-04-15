@@ -10,3 +10,17 @@ export const userRouter = express.Router();
 userRouter.post('/signup', userController.signup);
 userRouter.post('/login', userController.login);
 userRouter.get('/me', passport.authenticate('jwt', { session: false }), userController.authenticate);
+
+const adminPolicy = [passport.authenticate('jwt', { session: false }), isAdmin];
+userRouter
+  .route('/list')
+  .get(adminPolicy, userController.findAll);
+userRouter
+  .route('/create')
+  .post(adminPolicy, userController.createUser);
+
+userRouter
+  .route('/:id')
+  .get(adminPolicy, userController.findOne)
+  .delete(adminPolicy, userController.deleteUser)
+  .put(adminPolicy, userController.updateUser);

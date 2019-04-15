@@ -10,7 +10,7 @@ const comparePassword = (plainText, encrypedPassword) => {
   return bcrypt.compareSync(plainText, encrypedPassword);
 }
 
-const validateSignup = (body) => {
+const validateUser = (body) => {
   const schema = Joi.object().keys({
     userName: Joi.string().required(),
     accountNumber: Joi.number().required().integer(),
@@ -19,6 +19,24 @@ const validateSignup = (body) => {
       .required(),
     identityNumber: Joi.number().required().integer(),
     password: Joi.string().required(),
+    role: Joi.number().integer(),
+  });
+  const { value, error } = Joi.validate(body, schema);
+  if (error && error.details) {
+    return { error };
+  }
+  return { value };
+}
+
+const validateUserUpdate = (body) => {
+  const schema = Joi.object().keys({
+    userName: Joi.string().required(),
+    accountNumber: Joi.number().required().integer(),
+    emailAddress: Joi.string()
+      .email()
+      .required(),
+    identityNumber: Joi.number().required().integer(),
+    password: Joi.string(),
     role: Joi.number().integer(),
   });
   const { value, error } = Joi.validate(body, schema);
@@ -45,6 +63,7 @@ const validateLogin = (body) => {
 module.exports = {
   encryptPassword,
   comparePassword,
-  validateSignup,
+  validateUser,
+  validateUserUpdate,
   validateLogin
 };
