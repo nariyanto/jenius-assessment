@@ -17,6 +17,11 @@ chmod +x septiyanapp.sh
 ./septiyanapp.sh run
 ```
 
+### Seed admin user
+```
+{{url}}/api/users/seeder
+```
+
 ### Cleaning docker
 ```
 ./septiyanapp.sh clean

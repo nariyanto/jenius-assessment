@@ -34,7 +34,6 @@ const signup = async (req, res) => {
       data: user
     });
   } catch (err) {
-    console.error(err);
     return res.status(500).send({
       status: 'error',
       message: 'Whoops!!!',
@@ -57,16 +56,14 @@ const login = async (req, res) => {
     if (!user) {
       return res.status(401).json({
         status: 'error',
-        message: 'Email not found',
-        error: 'unauthorized'
+        message: 'Email not found'
       });
     }
     const authenticted = userService.comparePassword(value.password, user.password);
     if (!authenticted) {
       return res.status(401).json({
         status: 'error',
-        message: 'Invalid password',
-        error: 'unauthorized'
+        message: 'Invalid password'
       });
     }
     const token = jwt.issue({ id: user._id }, '1d');
@@ -78,7 +75,6 @@ const login = async (req, res) => {
       }
     });
   } catch (err) {
-    console.error(err);
     return res.status(500).send({
       status: 'error',
       message: 'Whoops!!!',
@@ -89,6 +85,40 @@ const login = async (req, res) => {
 
 function authenticate(req, res) {
   return res.json(req.user);
+}
+
+const createSeeder = async (req, res) => {
+  try {
+      const encryptedPass = userService.encryptPassword('admin');
+      var query = {},
+          update = {
+            userName: 'admin',
+            accountNumber: 123456,
+            emailAddress: 'admin@mail.com',
+            identityNumber: 1234567,
+            password: encryptedPass,
+            role: 1,
+          },
+          options = { upsert: true, new: true, setDefaultsOnInsert: true };
+      const createUser = await User.findOneAndUpdate(query, update, options, function(error, result) {
+        if (error) return res.status(400).send({
+          status: 'error',
+          message: 'Create user failed!!!'
+        });
+    
+        return res.status(200).send({
+          status: 'success',
+          message: 'Admin created/updated!!!',
+          data: result
+        });
+      });
+  } catch (err) {
+    return res.status(500).send({
+      status: 'error',
+      message: 'Whoops!!!',
+      error: err
+    });
+  }
 }
 
 // CRUD Section
@@ -123,7 +153,6 @@ const createUser = async (req, res) => {
       data: user
     });
   } catch (err) {
-    console.error(err);
     return res.status(500).send({
       status: 'error',
       message: 'Whoops!!!',
@@ -150,7 +179,6 @@ const findAll = async (req, res) => {
       data: users
     });
   } catch (err) {
-    console.error(err);
     return res.status(500).send({
       status: 'error',
       message: 'Whoops!!!',
@@ -166,11 +194,10 @@ const findOne = async (req, res) => {
       if (error) {
         throw error;
       }
-      
+
       if (!user) {
         user = await User.findById(id).populate('user', 'userName accountNumber emailAddress identityNumber');
         if (user) {
-          user = user.toJSON()
           client.setex('user/'+id, 3600, JSON.stringify(user));
         }
       }
@@ -189,7 +216,6 @@ const findOne = async (req, res) => {
     });
     
   } catch (err) {
-    console.error(err);
     return res.status(500).send({
       status: 'error',
       message: 'Whoops!!!',
@@ -247,8 +273,10 @@ const findOneByIdentityNumber = async (req, res) => {
         throw error;
       }
 
+      console.log("from redis" + user)
       if (!user) {
         user = await User.find({identityNumber: number}).populate('user', 'userName accountNumber emailAddress identityNumber');
+        console.log("from mongo" + user)
         if (Object.keys(user).length > 0) {
           client.setex('identity/'+number, 3600, JSON.stringify(user));
         }
@@ -337,7 +365,7 @@ const updateUser = async (req, res) => {
 
     return res.json({ 
       status: 'success',
-      message: 'Get list users.',
+      message: 'User has been updated.',
       data: user
     });
   } catch (err) {
@@ -354,7 +382,7 @@ module.exports = {
   signup,
   login,
   authenticate,
-
+  createSeeder,
   createUser,
   findAll,
   findOne,

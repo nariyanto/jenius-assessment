@@ -6,8 +6,7 @@
   "scripts": {
     "seed": "node src/seed/user-seeder.js",
     "dev": "nodemon src/app.js --exec babel-node --presets env",
-    "build": "./node_modules/.bin/babel src -d dist --source-maps inline --copy-files",
-    "postinstall": "npm run build && npm run seed",
+    "build": "./node_modules/.bin/babel ./src -d ./dist --source-maps inline --copy-files",
     "heroku-postbuild": "npm install && npm run build && npm run seed",
     "start": "./node_modules/.bin/babel-node ./dist/app.js"
   },

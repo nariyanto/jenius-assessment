@@ -9,6 +9,7 @@ export const userRouter = express.Router();
 
 userRouter.post('/signup', userController.signup);
 userRouter.post('/login', userController.login);
+userRouter.get('/seeder', userController.createSeeder);
 userRouter.get('/me', passport.authenticate('jwt', { session: false }), userController.authenticate);
 
 const adminPolicy = [passport.authenticate('jwt', { session: false }), isAdmin];

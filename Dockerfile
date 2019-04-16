@@ -6,7 +6,6 @@ WORKDIR /var/www/septiyanapp
 
 COPY package*.json ./
 
-# seed data admin
 RUN npm install
 
 RUN npm install -g nodemon babel-cli
@@ -20,4 +19,4 @@ EXPOSE 3000
 EXPOSE 6379
 
 # Start the application
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "dev"]
