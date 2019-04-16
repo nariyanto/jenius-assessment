@@ -21,6 +21,12 @@ if (process.env.NODE_ENV === 'development') {
 }
 app.use(passport.initialize()); // req.user
 configJWTStrategy();
+app.get('/', function (req, res) {
+  res.json({
+    status: 'You found me!!',
+    message: 'Hi, Jenius hiring team. Thank you for testing my app.'
+  })
+})
 app.use('/api', restRouter);
 
 app.use((req, res, next) => {
